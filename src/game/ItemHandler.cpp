@@ -487,12 +487,16 @@ void WorldSession::HandleSellItemOpcode(WorldPacket& recv_data)
     if (!itemGuid)
         return;
 
-    Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_VENDOR);
-    if (!pCreature)
+    Creature* pCreature = NULL;
+    if (vendorGuid != GetPlayer()->GetObjectGuid())
     {
-        DEBUG_LOG("WORLD: HandleSellItemOpcode - %s not found or you can't interact with him.", vendorGuid.GetString().c_str());
-        _player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, itemGuid, 0);
-        return;
+        pCreature = GetPlayer()->GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_VENDOR);
+        if (!pCreature)
+        {
+            DEBUG_LOG("WORLD: HandleSellItemOpcode - %s not found or you can't interact with him.", vendorGuid.GetString().c_str());
+            _player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, itemGuid, 0);
+            return;
+        }
     }
 
     // remove fake death
@@ -592,12 +596,16 @@ void WorldSession::HandleBuybackItem(WorldPacket& recv_data)
 
     recv_data >> vendorGuid >> slot;
 
-    Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_VENDOR);
-    if (!pCreature)
+    Creature* pCreature = NULL;
+    if (vendorGuid != GetPlayer()->GetObjectGuid())
     {
-        DEBUG_LOG("WORLD: HandleBuybackItem - %s not found or you can't interact with him.", vendorGuid.GetString().c_str());
-        _player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, ObjectGuid(), 0);
-        return;
+        pCreature = GetPlayer()->GetNPCIfCanInteractWith(vendorGuid, UNIT_NPC_FLAG_VENDOR);
+        if (!pCreature)
+        {
+            DEBUG_LOG("WORLD: HandleBuybackItem - %s not found or you can't interact with him.", vendorGuid.GetString().c_str());
+            _player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, ObjectGuid(), 0);
+            return;
+        }
     }
 
     // remove fake death
@@ -694,17 +702,21 @@ void WorldSession::HandleListInventoryOpcode(WorldPacket& recv_data)
     SendListInventory(guid);
 }
 
-void WorldSession::SendListInventory(ObjectGuid vendorguid)
+void WorldSession::SendListInventory(ObjectGuid vendorguid, uint32 vendorEntry)
 {
     DEBUG_LOG("WORLD: Sent SMSG_LIST_INVENTORY");
 
-    Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(vendorguid, UNIT_NPC_FLAG_VENDOR);
-
-    if (!pCreature)
+    SetCurrentVendor(vendorEntry);
+    Creature* pCreature = NULL;
+    if (GetPlayer()->GetObjectGuid() != vendorguid)
     {
-        DEBUG_LOG("WORLD: SendListInventory - %s not found or you can't interact with him.", vendorguid.GetString().c_str());
-        _player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, ObjectGuid(), 0);
-        return;
+        pCreature = GetPlayer()->GetNPCIfCanInteractWith(vendorguid, UNIT_NPC_FLAG_VENDOR);
+        if (!pCreature)
+        {
+            DEBUG_LOG("WORLD: SendListInventory - %s not found or you can't interact with him.", vendorguid.GetString().c_str());
+            _player->SendSellError(SELL_ERR_CANT_FIND_VENDOR, NULL, ObjectGuid(), 0);
+            return;
+        }
     }
 
     // remove fake death
@@ -712,10 +724,11 @@ void WorldSession::SendListInventory(ObjectGuid vendorguid)
         GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
     // Stop the npc if moving
-    pCreature->StopMoving();
-
-    VendorItemData const* vItems = pCreature->GetVendorItems();
-    VendorItemData const* tItems = pCreature->GetVendorTemplateItems();
+    if (pCreature && pCreature->hasUnitState(UNIT_STAT_MOVING))
+        pCreature->StopMoving();
+ 
+    VendorItemData const* vItems = vendorEntry ? sObjectMgr.GetNpcVendorItemList(vendorEntry) : pCreature ? pCreature->GetVendorItems() : NULL;
+    VendorItemData const* tItems = vendorEntry ? sObjectMgr.GetNpcVendorTemplateItemList(vendorEntry) : pCreature ? pCreature->GetVendorTemplateItems() : NULL;
 
     if (!vItems && !tItems)
     {
@@ -738,7 +751,7 @@ void WorldSession::SendListInventory(ObjectGuid vendorguid)
     size_t count_pos = data.wpos();
     data << uint8(count);
 
-    float discountMod = _player->GetReputationPriceDiscount(pCreature);
+    float discountMod = pCreature ? _player->GetReputationPriceDiscount(pCreature) : 1.0f;
 
     for (int i = 0; i < numitems; ++i)
     {
@@ -760,8 +773,11 @@ void WorldSession::SendListInventory(ObjectGuid vendorguid)
                     if ((pProto->AllowableRace & _player->getRaceMask()) == 0)
                         continue;
 
-                    if (crItem->conditionId && !sObjectMgr.IsPlayerMeetToCondition(crItem->conditionId, _player, pCreature->GetMap(), pCreature, CONDITION_FROM_VENDOR))
-                        continue;
+                    if (pCreature)
+                    {
+                        if (crItem->conditionId && !sObjectMgr.IsPlayerMeetToCondition(crItem->conditionId, _player, pCreature->GetMap(), pCreature, CONDITION_FROM_VENDOR))
+                            continue;
+                    }
                 }
 
                 ++count;
@@ -772,7 +788,7 @@ void WorldSession::SendListInventory(ObjectGuid vendorguid)
                 data << uint32(count);
                 data << uint32(itemId);
                 data << uint32(pProto->DisplayInfoID);
-                data << uint32(crItem->maxcount <= 0 ? 0xFFFFFFFF : pCreature->GetVendorItemCurrentCount(crItem));
+                data << uint32(pCreature ? crItem->maxcount <= 0 ? 0xFFFFFFFF : pCreature->GetVendorItemCurrentCount(crItem) : 0xFFFFFFFF); /*0 = infinite*/
                 data << uint32(price);
                 data << uint32(pProto->MaxDurability);
                 data << uint32(pProto->BuyCount);

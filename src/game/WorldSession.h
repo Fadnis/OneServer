@@ -211,7 +211,7 @@ class MANGOS_DLL_SPEC WorldSession
         void SendTrainerList(ObjectGuid guid);
         void SendTrainerList(ObjectGuid guid, const std::string& strTitle);
 
-        void SendListInventory(ObjectGuid guid);
+        void SendListInventory(ObjectGuid guid, uint32 vendorEntry = 0);
         bool CheckBanker(ObjectGuid guid);
         void SendShowBank(ObjectGuid guid);
         bool CheckMailBox(ObjectGuid guid);
@@ -313,6 +313,10 @@ class MANGOS_DLL_SPEC WorldSession
         void SendKnockBack(float angle, float horizontalSpeed, float verticalSpeed);
         void SendPlaySpellVisual(ObjectGuid guid, uint32 spellArtKit);
         void SendItemPageInfo(ItemPrototype* itemProto);
+
+        // Multivendor
+        uint32 GetCurrentVendor() const { return m_current_vendor; }
+        void SetCurrentVendor(uint32 entry) { m_current_vendor = entry; }
 
     public:                                                 // opcodes handlers
 
@@ -771,6 +775,7 @@ class MANGOS_DLL_SPEC WorldSession
         int m_sessionDbLocaleIndex;
         uint32 m_latency;
         uint32 m_Tutorials[8];
+        uint32 m_current_vendor;
         TutorialDataState m_tutorialState;
         ACE_Based::LockedQueue<WorldPacket*, ACE_Thread_Mutex> _recvQueue;
 };

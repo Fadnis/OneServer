@@ -8953,7 +8953,7 @@ bool ObjectMgr::IsVendorItemValid(bool isTemplate, char const* tableName, uint32
     char const* idStr = isTemplate ? "vendor template" : "vendor";
     CreatureInfo const* cInfo = NULL;
 
-    if (!isTemplate)
+    /*if (!isTemplate)
     {
         cInfo = GetCreatureTemplate(vendor_entry);
         if (!cInfo)
@@ -8979,7 +8979,7 @@ bool ObjectMgr::IsVendorItemValid(bool isTemplate, char const* tableName, uint32
             }
             return false;
         }
-    }
+    }*/
 
     if (!GetItemPrototype(item_id))
     {
