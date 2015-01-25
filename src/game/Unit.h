@@ -1970,6 +1970,9 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         MovementInfo m_movementInfo;
         Movement::MoveSpline* movespline;
 
+        void SendPlaySpellVisual(uint32 id);
+        void SendPlaySpellImpact(ObjectGuid guid, uint32 id);
+
         void ScheduleAINotify(uint32 delay);
         bool IsAINotifyScheduled() const { return m_AINotifyScheduled;}
         void _SetAINotifyScheduled(bool on) { m_AINotifyScheduled = on;}       // only for call from RelocationNotifyEvent code

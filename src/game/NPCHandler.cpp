@@ -316,17 +316,13 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recv_data)
     if (HasTrainerSpellCost())
         _player->ModifyMoney(-int32(nSpellCost));
 
-    SendPlaySpellVisual(guid, 0xB3);                        // visual effect on trainer
-
-    WorldPacket data(SMSG_PLAY_SPELL_IMPACT, 8 + 4);        // visual effect on player
-    data << _player->GetObjectGuid();
-    data << uint32(0x016A);                                 // index from SpellVisualKit.dbc
-    SendPacket(&data);
+    unit->SendPlaySpellVisual(179); // 53 SpellCastDirected
+    unit->SendPlaySpellImpact(_player->GetObjectGuid(), 362); // 113 EmoteSalute
 
     // learn explicitly
     _player->learnSpell(trainer_spell->spell, false);
 
-    data.Initialize(SMSG_TRAINER_BUY_SUCCEEDED, 12);
+    WorldPacket data(SMSG_TRAINER_BUY_SUCCEEDED, 12);
     data << ObjectGuid(guid);
     data << uint32(spellId);                                // should be same as in packet from client
     SendPacket(&data);

@@ -311,7 +311,6 @@ class MANGOS_DLL_SPEC WorldSession
 
         // Misc
         void SendKnockBack(float angle, float horizontalSpeed, float verticalSpeed);
-        void SendPlaySpellVisual(ObjectGuid guid, uint32 spellArtKit);
         void SendItemPageInfo(ItemPrototype* itemProto);
 
         // Multi Trainer

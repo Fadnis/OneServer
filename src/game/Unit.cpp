@@ -51,6 +51,7 @@
 #include "movement/MoveSplineInit.h"
 #include "movement/MoveSpline.h"
 #include "CreatureLinkingMgr.h"
+#include "Object.h"
 #include "LuaEngine.h"
 #include "ElunaEventMgr.h"
 
@@ -9853,3 +9854,20 @@ void Unit::DisableSpline()
     m_movementInfo.RemoveMovementFlag(MovementFlags(MOVEFLAG_SPLINE_ENABLED | MOVEFLAG_FORWARD));
     movespline->_Interrupt();
 }
+
+void Unit::SendPlaySpellVisual(uint32 id)
+{
+    WorldPacket data(SMSG_PLAY_SPELL_VISUAL, 8 + 4);
+    data << uint64(GetObjectGuid());
+    data << uint32(id); // SpellVisualKit.dbc index
+    SendMessageToSet(&data, false);
+}
+
+void Unit::SendPlaySpellImpact(ObjectGuid guid, uint32 id)
+{
+    WorldPacket data(SMSG_PLAY_SPELL_IMPACT, 8 + 4);
+    data << uint64(guid); // target
+    data << uint32(id); // SpellVisualKit.dbc index
+    SendMessageToSet(&data, false);
+}
+
