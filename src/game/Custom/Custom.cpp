@@ -87,4 +87,11 @@ void CustomClass::LoadCustomConfSettings(bool reload)
             Log::WaitBeforeContinueIfNeed();
         }
     }
+
+    // Stats limits
+    setCustomConfig(CUSTOMCONFIG_BOOL_STATS_LIMITS_ENABLE, "StatsLimits.Enable", false);
+    setCustomConfig(CUSTOMCONFIG_FLOAT_STATS_LIMITS_DODGE, "StatsLimits.Dodge", 95.0f);
+    setCustomConfig(CUSTOMCONFIG_FLOAT_STATS_LIMITS_PARRY, "StatsLimits.Parry", 95.0f);
+    setCustomConfig(CUSTOMCONFIG_FLOAT_STATS_LIMITS_BLOCK, "StatsLimits.Block", 95.0f);
+    setCustomConfig(CUSTOMCONFIG_FLOAT_STATS_LIMITS_CRIT, "StatsLimits.Crit", 95.0f);
 }

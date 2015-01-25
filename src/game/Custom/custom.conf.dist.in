@@ -4,3 +4,23 @@
 
 [CustomConf]
 ConfVersion=2010062001
+
+###################################################################################################################
+# STATS LIMITS SETTINGS
+#
+#   StatsLimits.Enable
+#       Enable or disable stats system
+#       Default: 0 - Disabled
+#
+#   StatsLimit
+#       Set percentage limit for dodge, parry, block and crit rating
+#       Default: 95.0 (95%)
+#
+###################################################################################################################
+
+StatsLimits.Enable = 1
+StatsLimits.Dodge = 95.0
+StatsLimits.Parry = 95.0
+StatsLimits.Block = 95.0
+StatsLimits.Crit = 95.0
+
