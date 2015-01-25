@@ -208,8 +208,8 @@ class MANGOS_DLL_SPEC WorldSession
         void SendNameQueryOpcodeFromDB(ObjectGuid guid);
         static void SendNameQueryOpcodeFromDBCallBack(QueryResult* result, uint32 accountId);
 
-        void SendTrainerList(ObjectGuid guid);
-        void SendTrainerList(ObjectGuid guid, const std::string& strTitle);
+        void SendTrainerList(ObjectGuid guid, uint32 trainer_entry = 0, bool spell_cost = true);
+        void SendTrainerList(ObjectGuid guid, const std::string& strTitle, uint32 trainer_entry = 0, bool spell_cost = true);
 
         void SendListInventory(ObjectGuid guid, uint32 vendorEntry = 0);
         bool CheckBanker(ObjectGuid guid);
@@ -313,6 +313,12 @@ class MANGOS_DLL_SPEC WorldSession
         void SendKnockBack(float angle, float horizontalSpeed, float verticalSpeed);
         void SendPlaySpellVisual(ObjectGuid guid, uint32 spellArtKit);
         void SendItemPageInfo(ItemPrototype* itemProto);
+
+        // Multi Trainer
+        uint32 GetCurrentTrainer() const { return m_currentTrainer; };
+        void SetCurrentTrainer(uint32 trainer_entry) { m_currentTrainer = trainer_entry; };
+        bool HasTrainerSpellCost() const { return m_current_trainer_cost; }
+        void SetHasTrainerSpellCost(bool has_spell_cost) { m_current_trainer_cost = has_spell_cost; }
 
         // Multivendor
         uint32 GetCurrentVendor() const { return m_current_vendor; }
@@ -775,6 +781,8 @@ class MANGOS_DLL_SPEC WorldSession
         int m_sessionDbLocaleIndex;
         uint32 m_latency;
         uint32 m_Tutorials[8];
+        bool m_current_trainer_cost;
+        uint32 m_currentTrainer;
         uint32 m_current_vendor;
         TutorialDataState m_tutorialState;
         ACE_Based::LockedQueue<WorldPacket*, ACE_Thread_Mutex> _recvQueue;
