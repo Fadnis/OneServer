@@ -1054,6 +1054,9 @@
     <ClInclude Include="..\..\src\game\BattleGround\BattleGroundWS.h">
       <Filter>BattleGround</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Custom.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\game\LuaEngine\AuraMethods.h">
       <Filter>LuaEngine\Methods</Filter>
     </ClInclude>

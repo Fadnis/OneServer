@@ -1054,6 +1054,9 @@
     <ClInclude Include="..\..\src\game\TransportSystem.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\game\Custom\Custom.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\game\LuaEngine\AuraMethods.h">
       <Filter>LuaEngine\Methods</Filter>
     </ClInclude>
