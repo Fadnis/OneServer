@@ -316,8 +316,21 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recv_data)
     if (HasTrainerSpellCost())
         _player->ModifyMoney(-int32(nSpellCost));
 
-    unit->SendPlaySpellVisual(179); // 53 SpellCastDirected
-    unit->SendPlaySpellImpact(_player->GetObjectGuid(), 362); // 113 EmoteSalute
+    if (!guid.IsCreature())
+    {
+        WorldPacket data(SMSG_PLAY_SPELL_VISUAL, 8 + 4);
+        data << uint64(guid) << uint32(179);
+        _player->GetMap()->MessageBroadcast(_player, &data);
+        data.clear();
+        data.Initialize(SMSG_PLAY_SPELL_IMPACT, 8 + 4);
+        data << uint64(guid) << uint32(362);
+        _player->GetMap()->MessageBroadcast(_player, &data);
+    }
+    else
+    {
+        unit->SendPlaySpellVisual(179); // 53 SpellCastDirected
+        unit->SendPlaySpellImpact(_player->GetObjectGuid(), 362); // 113 EmoteSalute
+    }
 
     // learn explicitly
     _player->learnSpell(trainer_spell->spell, false);
