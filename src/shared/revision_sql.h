@@ -1,7 +1,7 @@
 #ifndef __REVISION_SQL_H__
 #define __REVISION_SQL_H__
  #define REVISION_DB_CHARACTERS "required_s2204_12756_01_characters_pvpstats"
- #define REVISION_DB_MANGOS "required_s2254_12816_02_mangos_mangos_string"
+ #define REVISION_DB_MANGOS "required_s2261_12821_01_mangos_command"
  #define REVISION_DB_REALMD "required_10008_01_realmd_realmd_db_version"
  #define REVISION_DB_CHARACTERS_DEV "required_dev_0004_01_character_dev_db_version"
  #define REVISION_DB_MANGOS_DEV "required_dev_0007_01_mangos_instance_template"
