@@ -826,7 +826,6 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_BOOL_GM_CHAT_COLOR_ENABLED, "GM.ChatColor.Enabled", false);
 
     setConfig(CONFIG_BOOL_ELUNA_ENABLED, "Eluna.Enabled", true);
-
     if (reload)
         sEluna->OnConfigLoad(reload);
 
